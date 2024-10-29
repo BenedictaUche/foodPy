@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Image,
+  Animated
 } from "react-native";
 
 const styles = StyleSheet.create({
@@ -13,6 +15,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     backgroundColor: "#fff",
+  },
+  foodPlate: {
+    // width: 100,
+    // height: 100,
+    position: "absolute",
+    top: 120,
+    right: 0,
+    zIndex: 999
   },
   authBox: {
     width: "80%",
@@ -23,10 +33,10 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
+    marginTop: 50,
   },
   header: {
     flexDirection: "row",
-    //   justifyContent: 'space-between',
     marginBottom: 20,
     gap: 18,
   },
@@ -50,18 +60,35 @@ const styles = StyleSheet.create({
   signupButton: {
     backgroundColor: "#FFD700",
     paddingVertical: 15,
+    width: "50%",
     alignItems: "center",
-    borderRadius: 25,
+    borderRadius: 15,
+    marginVertical: 10
   },
   signupText: {
     color: "#000000",
     fontWeight: "bold",
+    fontSize: 18
   },
 });
 
 export default function Signup({ navigation }) {
+  const slideAnim = useRef(new Animated.Value(-200)).current; // Initial position off-screen to the top-right
+
+  useEffect(() => {
+    Animated.timing(slideAnim, {
+      toValue: 0,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  }, []);
+
   return (
     <View style={styles.container}>
+      <Animated.Image
+        source={require('../../assets/food-plate.png')}
+        style={[styles.foodPlate, { transform: [{ translateX: slideAnim }] }]}
+      />
       <View style={styles.authBox}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.navigate("Login")}>
@@ -69,17 +96,15 @@ export default function Signup({ navigation }) {
           </TouchableOpacity>
           <Text style={[styles.headerText, styles.activeTab]}>Sign up</Text>
         </View>
-        <TextInput placeholder="Username" style={styles.input} />
+        <TextInput placeholder="Full Name" style={styles.input} />
         <TextInput placeholder="Email" style={styles.input} />
-        <TextInput
-          placeholder="Password"
-          style={styles.input}
-          secureTextEntry
-        />
-        <TouchableOpacity style={styles.signupButton}>
-          <Text style={styles.signupText}>Sign Up</Text>
-        </TouchableOpacity>
+        <TextInput placeholder="Phone Number" style={styles.input} />
+        <TextInput placeholder="Username" style={styles.input} />
+        <TextInput placeholder="Password" style={styles.input} secureTextEntry />
       </View>
+      <TouchableOpacity style={styles.signupButton}>
+          <Text style={styles.signupText}>Sign Up</Text>
+      </TouchableOpacity>
     </View>
   );
 }
